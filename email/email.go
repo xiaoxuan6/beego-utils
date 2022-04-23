@@ -24,7 +24,6 @@ func init() {
 	}
 
 	add := fmt.Sprintf("%s:%s", host, strconv.Itoa(port))
-	fmt.Println(host, port, username, password, add)
 
 	Send = make(chan *email2.Email, chanlimit)
 
