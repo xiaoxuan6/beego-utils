@@ -11,3 +11,7 @@ func Parse(str []byte) string {
 
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
+
+func ParseString(str string) string {
+	return Parse([]byte(str))
+}
