@@ -40,7 +40,7 @@ func (j *JWT) GenerateToken(id int64, userName string) (token string, err error)
 		ID:       id,
 		UserName: userName,
 		StandardClaims: gjwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Duration(expiresAt)).Unix(),
+			ExpiresAt: time.Now().Add(time.Duration(expiresAt) * time.Second).Unix(),
 		},
 	}
 
