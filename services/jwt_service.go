@@ -35,7 +35,7 @@ func init() {
 }
 
 func (j *JWT) GenerateToken(id int64, userName string) (token string, err error) {
-	claims := jwt.Claims{
+	claims := jwt.MyClaims{
 		ID:       id,
 		UserName: userName,
 		StandardClaims: gjwt.StandardClaims{
@@ -43,10 +43,10 @@ func (j *JWT) GenerateToken(id int64, userName string) (token string, err error)
 		},
 	}
 
-	return jwt.GenerateToken(&claims, key)
+	return jwt.GenerateToken(claims, key)
 }
 
-func (j *JWT) Parse(ctx context.Context) (claims *jwt.Claims, error error) {
+func (j *JWT) Parse(ctx *context.Context) (claims gjwt.MapClaims, error error) {
 	token, err := getTokenFromHeader(ctx)
 
 	if err != nil {
@@ -67,15 +67,11 @@ func (j *JWT) Parse(ctx context.Context) (claims *jwt.Claims, error error) {
 		return nil, e
 	}
 
-	if claims, ok := c.(*jwt.Claims); ok {
-		return claims, nil
-	}
-
-	return nil, ErrTokenInvalid
+	return c, nil
 }
 
 // 获取 header 中的 Authorization:Bearer xxxxx
-func getTokenFromHeader(ctx context.Context) (string, error) {
+func getTokenFromHeader(ctx *context.Context) (string, error) {
 	Authorization := ctx.Input.Header("Authorization")
 
 	if Authorization == "" {
