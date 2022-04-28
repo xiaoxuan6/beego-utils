@@ -77,7 +77,7 @@ func (j *JWT) Parse(ctx *context.Context) (claims gjwt.MapClaims, error error) {
 }
 
 // ParseWithClaims 使用 jwt.ParseWithClaims 解析 Token
-func ParseWithClaims(ctx *context.Context) (*jwt.MyClaims, error) {
+func (j *JWT) ParseWithClaims(ctx *context.Context) (*jwt.MyClaims, error) {
 	token, err := getTokenFromHeader(ctx)
 
 	if err != nil {
