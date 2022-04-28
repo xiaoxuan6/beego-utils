@@ -34,6 +34,7 @@ func init() {
 	expiresAt, _ = beego.AppConfig.Int64("expires_at")
 }
 
+// GenerateToken 生成 token
 func (j *JWT) GenerateToken(id int64, userName string) (token string, err error) {
 	claims := jwt.MyClaims{
 		ID:       id,
@@ -46,6 +47,7 @@ func (j *JWT) GenerateToken(id int64, userName string) (token string, err error)
 	return jwt.GenerateToken(claims, key)
 }
 
+// Parse 使用 jwt.ParseTokenString 解析 Token
 func (j *JWT) Parse(ctx *context.Context) (claims gjwt.MapClaims, error error) {
 	token, err := getTokenFromHeader(ctx)
 
@@ -55,6 +57,34 @@ func (j *JWT) Parse(ctx *context.Context) (claims gjwt.MapClaims, error error) {
 
 	c, e := jwt.ParseTokenString(token, key)
 
+	if e != nil {
+		validationErr, ok := e.(gjwt.ValidationError)
+
+		if ok {
+			if validationErr.Errors == gjwt.ValidationErrorExpired {
+				return nil, ErrTokenExpired
+			}
+		}
+
+		return nil, e
+	}
+
+	if cl, ok := c.(gjwt.MapClaims); ok {
+		return cl, nil
+	}
+
+	return nil, ErrTokenInvalid
+}
+
+// ParseWithClaims 使用 jwt.ParseWithClaims 解析 Token
+func ParseWithClaims(claims jwt.MyClaims, ctx *context.Context) (*jwt.MyClaims, error) {
+	token, err := getTokenFromHeader(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	c, e := jwt.ParseWithClaims(token, claims, key)
 	if e != nil {
 		validationErr, ok := e.(gjwt.ValidationError)
 
