@@ -77,14 +77,14 @@ func (j *JWT) Parse(ctx *context.Context) (claims gjwt.MapClaims, error error) {
 }
 
 // ParseWithClaims 使用 jwt.ParseWithClaims 解析 Token
-func ParseWithClaims(claims jwt.MyClaims, ctx *context.Context) (*jwt.MyClaims, error) {
+func ParseWithClaims(ctx *context.Context) (*jwt.MyClaims, error) {
 	token, err := getTokenFromHeader(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	c, e := jwt.ParseWithClaims(token, claims, key)
+	c, e := jwt.ParseWithClaims(token, &jwt.MyClaims{}, key)
 	if e != nil {
 		validationErr, ok := e.(gjwt.ValidationError)
 
