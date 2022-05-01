@@ -15,16 +15,6 @@ type Captcha struct {
 	Id string `json:"id"` // 验证码ID
 }
 
-var length int
-var stdWidth int
-var stdHeight int
-
-func init() {
-	length = beego.AppConfig.DefaultInt("len", captcha.DefaultLen)
-	stdWidth = beego.AppConfig.DefaultInt("std_width", captcha.StdWidth)
-	stdHeight = beego.AppConfig.DefaultInt("std_height", captcha.StdHeight)
-}
-
 var CaptchaService = newCaptchaService()
 
 func newCaptchaService() *captchaService {
@@ -32,6 +22,8 @@ func newCaptchaService() *captchaService {
 }
 
 func (c *captchaService) NewCaptcha() (cap *Captcha) {
+	length := beego.AppConfig.DefaultInt("len", captcha.DefaultLen)
+
 	captchaId := captcha.NewLen(length)
 
 	cap = &Captcha{
@@ -51,6 +43,9 @@ func (c *captchaService) Verify(captchaId, captchaVal string) error {
 
 func (c *captchaService) GetCaptchaBase64ById(captchaId string) (str string, error error) {
 	var content bytes.Buffer
+
+	stdWidth := beego.AppConfig.DefaultInt("std_width", captcha.StdWidth)
+	stdHeight := beego.AppConfig.DefaultInt("std_height", captcha.StdHeight)
 
 	if err := captcha.WriteImage(&content, captchaId, stdWidth, stdHeight); err != nil {
 		return "", err
